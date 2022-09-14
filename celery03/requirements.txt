@@ -1,0 +1,5 @@
+celery==5.2.7
+ipython==8.5.0
+librabbitmq==2.0.0
+watchdog==2.1.9
+amqp==5.1.1

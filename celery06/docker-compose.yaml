@@ -1,0 +1,38 @@
+version: "3.3"
+services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    depends_on:
+      - rabbitmq
+      - redis
+      - celery_worker
+    volumes:
+      - .:/app:z
+
+#  celery_worker:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    command: >
+#      bash -c "
+#        sleep 5 &&
+#        watchmedo auto-restart --recursive --directory=/app --pattern=*.py \
+#          -- celery -A tasks worker --loglevel=INFO"
+#    tty: true
+#    deploy:
+#      mode: replicated
+#      replicas: 3
+#    depends_on:
+#      - rabbitmq
+#      - redis
+#    volumes:
+#      - .:/app:z
+
+  rabbitmq:
+    image: rabbitmq:3
+
+  redis:
+    image: redis:6

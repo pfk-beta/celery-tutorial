@@ -1,0 +1,29 @@
+version: "3"
+services:
+  celery_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    depends_on:
+      - rabbitmq
+      - celery_worker
+    volumes:
+      - .:/app:z
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sh -c "sleep 5 && watchmedo auto-restart --directory=/app --pattern=*.py -- celery -A tasks worker --loglevel=INFO"
+    tty: true
+    deploy:
+      mode: replicated
+      replicas: 2
+    depends_on:
+      - rabbitmq
+    volumes:
+      - .:/app:z
+
+  rabbitmq:
+    image: rabbitmq:3

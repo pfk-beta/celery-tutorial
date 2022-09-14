@@ -1,0 +1,42 @@
+version: "3.3"
+services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python3 manage.py runserver 0.0.0.0:8000
+    tty: true
+    ports:
+      - 127.0.0.1:8007:8000
+    depends_on:
+      - rabbitmq
+      - redis
+      - celery_worker
+    volumes:
+      - .:/app:z
+    restart: on-failure
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      bash -c "
+        sleep 5 &&
+        watchmedo auto-restart --recursive --directory=/app --pattern=*.py \
+          -- celery -A myshop.celery worker --loglevel=INFO"
+    tty: true
+    deploy:
+      mode: replicated
+      replicas: 3
+    depends_on:
+      - rabbitmq
+      - redis
+    volumes:
+      - .:/app:z
+
+  rabbitmq:
+    image: rabbitmq:3
+
+  redis:
+    image: redis:6

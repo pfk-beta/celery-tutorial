@@ -1,0 +1,14 @@
+version: "3.3"
+services:
+  celery_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    depends_on:
+      - rabbitmq
+    volumes:
+      - .:/app:z
+
+  rabbitmq:
+    image: rabbitmq:3

@@ -1,0 +1,3 @@
+db.sqlite3
+media/*
+catalogue/external_fixtures/*
